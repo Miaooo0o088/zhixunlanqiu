@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排行榜 - AI篮球训练营</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/leaderboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-brand">
+                <a href="index.html">AI篮球训练营</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">
+                    <i class="fas fa-home"></i> 首页
+                </a></li>
+                <li><a href="training.html">
+                    <i class="fas fa-running"></i> 实时训练
+                </a></li>
+                <li><a href="courses.html">
+                    <i class="fas fa-star"></i> 明星课程
+                </a></li>
+                <li><a href="leaderboard.html" class="active">
+                    <i class="fas fa-trophy"></i> 排行榜
+                </a></li>
+                <li><a href="community.html">
+                    <i class="fas fa-users"></i> 社区
+                </a></li>
+                <li><a href="profile.html">
+                    <i class="fas fa-user"></i> 个人中心
+                </a></li>
+                <li class="auth-links">
+                    <a href="auth.html" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> 登录
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="leaderboard-page">
+        <div class="container">
+            <h1>排行榜</h1>
+            
+            <div class="leaderboard-tabs">
+                <button class="tab-btn active" data-period="daily">日榜</button>
+                <button class="tab-btn" data-period="weekly">周榜</button>
+                <button class="tab-btn" data-period="monthly">月榜</button>
+            </div>
+
+            <div class="leaderboard-list">
+                <div class="top-three">
+                    <div class="rank-card second">
+                        <div class="rank-number">2</div>
+                        <img src="images/avatars/user2.jpg" alt="用户头像" class="user-avatar">
+                        <div class="user-info">
+                            <h3>投篮王者</h3>
+                            <span class="level">Level 16</span>
+                        </div>
+                        <div class="score">95分</div>
+                    </div>
+
+                    <div class="rank-card first">
+                        <div class="rank-number">1</div>
+                        <div class="crown"><i class="fas fa-crown"></i></div>
+                        <img src="images/avatars/user1.jpg" alt="用户头像" class="user-avatar">
+                        <div class="user-info">
+                            <h3>王者归来</h3>
+                            <span class="level">Level 18</span>
+                        </div>
+                        <div class="score">98分</div>
+                    </div>
+
+                    <div class="rank-card third">
+                        <div class="rank-number">3</div>
+                        <img src="images/avatars/user3.jpg" alt="用户头像" class="user-avatar">
+                        <div class="user-info">
+                            <h3>篮球达人</h3>
+                            <span class="level">Level 15</span>
+                        </div>
+                        <div class="score">92分</div>
+                    </div>
+                </div>
+
+                <div class="rank-list">
+                    <div class="rank-item">
+                        <div class="rank-number">4</div>
+                        <img src="images/avatars/user4.jpg" alt="用户头像" class="user-avatar">
+                        <div class="user-info">
+                            <h3>训练新星</h3>
+                            <span class="level">Level 14</span>
+                        </div>
+                        <div class="score">90分</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/nav.js"></script>
+    <script src="js/leaderboard.js"></script>
+</body>
+</html> 

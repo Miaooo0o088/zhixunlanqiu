@@ -1,0 +1,545 @@
+/* 认证页面专用样式 */
+.auth-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a1a, #2c2c2c, #3a3a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-box {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* 头部样式优化 */
+.auth-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.auth-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease;
+}
+
+.auth-logo:hover {
+    transform: scale(1.05);
+}
+
+.auth-header h1 {
+    font-size: 1.8rem;
+    color: #1a1a1a;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(45deg, #0052D4, #4364F7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    transition: all 0.3s ease;
+}
+
+.auth-header h1:hover {
+    transform: scale(1.02);
+    background: linear-gradient(45deg, #4364F7, #6FB1FC);
+    -webkit-background-clip: text;
+}
+
+.auth-header p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* 标签页切换样式优化 */
+.auth-tabs {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    background: none;
+    color: #666;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.auth-tab.active {
+    color: var(--primary-color);
+}
+
+.auth-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 3px;
+    transform: scaleX(0.8);
+    transition: transform 0.3s ease;
+}
+
+.auth-tab:hover::after {
+    transform: scaleX(1);
+}
+
+/* 表单样式优化 */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #444;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007AFF;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+/* 登录方式切换按钮组 */
+.login-type-switch {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: rgba(240, 242, 245, 0.5);
+    padding: 0.5rem;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.switch-btn {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #666;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.switch-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(0, 122, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+    z-index: -1;
+}
+
+.switch-btn:hover::before {
+    width: 150%;
+    height: 150%;
+}
+
+.switch-btn.active {
+    background: white;
+    color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+}
+
+/* 登录按钮组样式优化 */
+.auth-buttons {
+    display: grid;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+/* 主要按钮样式 */
+.login-btn {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    background: #007AFF;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background: #0066CC;
+    transform: translateY(-2px);
+}
+
+/* 次要按钮样式 */
+.register-btn {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #007AFF;
+    border-radius: 12px;
+    background: transparent;
+    color: #007AFF;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+    background: rgba(0, 122, 255, 0.1);
+}
+
+/* 按钮激活状态 */
+.btn-active {
+    background: white;
+    color: #4364F7;
+    box-shadow: 0 2px 10px rgba(67, 100, 247, 0.2);
+    position: relative;
+}
+
+.btn-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 82, 212, 0.1), rgba(67, 100, 247, 0.1));
+    border-radius: inherit;
+    z-index: -1;
+}
+
+/* 按钮组容器 */
+.button-group {
+    display: flex;
+    gap: 1rem;
+    background: rgba(240, 242, 245, 0.5);
+    padding: 0.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+.button-group button {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #666;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button-group button.active {
+    background: white;
+    color: #4364F7;
+    box-shadow: 0 2px 8px rgba(67, 100, 247, 0.15);
+    font-weight: 500;
+}
+
+/* 按钮禁用状态 */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 480px) {
+    .auth-page {
+        padding: 1rem;
+    }
+
+    .auth-box {
+        padding: 1.5rem;
+        border-radius: 20px;
+    }
+
+    .auth-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .form-group input {
+        font-size: 16px;
+    }
+
+    .auth-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .button-group button {
+        width: 100%;
+    }
+}
+
+/* 社交登录按钮优化 */
+.social-login {
+    margin-top: 2rem;
+    text-align: center;
+    border-top: 1px solid #eee;
+    padding-top: 2rem;
+}
+
+.social-login p {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.social-btn {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.social-btn.wechat {
+    background: #07C160;
+    color: white;
+}
+
+.social-btn.qq {
+    background: #12B7F5;
+    color: white;
+}
+
+.social-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 记住我和忘记密码 */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #007AFF;
+}
+
+/* 验证码按钮 */
+.send-code-btn {
+    padding: 0 1.5rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    background: white;
+    color: var(--primary-color);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.send-code-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.send-code-btn:disabled {
+    border-color: #ddd;
+    color: #999;
+    cursor: not-allowed;
+    background: #f5f5f5;
+}
+
+/* 验证码输入框组 */
+.code-input {
+    display: flex;
+    gap: 1rem;
+}
+
+.code-input input {
+    flex: 1;
+}
+
+/* 密码强度指示器 */
+.password-strength {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.strength-bar {
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.strength-bar::before {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0;
+    background: #ff4d4d;
+    transition: all 0.3s ease;
+}
+
+.strength-bar.weak::before {
+    width: 33.33%;
+    background: #ff4d4d;
+}
+
+.strength-bar.medium::before {
+    width: 66.66%;
+    background: #ffb700;
+}
+
+.strength-bar.strong::before {
+    width: 100%;
+    background: #00c853;
+}
+
+/* 协议同意选项 */
+.agreement {
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.agreement-link {
+    color: #007AFF;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.agreement-link:hover {
+    color: #0056b3;
+}
+
+/* Toast提示样式 */
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 24px;
+    font-size: 0.9rem;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* 密码输入框组样式优化 */
+.password-input {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: var(--primary-color);
+}
+
+.toggle-password:focus {
+    outline: none;
+} 

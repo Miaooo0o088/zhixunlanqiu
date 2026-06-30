@@ -1,0 +1,171 @@
+/* 课程页面样式 */
+.courses-page {
+    padding: 2rem;
+    padding-top: 80px;
+}
+
+.courses-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.courses-container h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--dark-color);
+}
+
+/* 课程筛选器 */
+.course-filters {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+.filter-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 20px;
+    background: var(--light-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.filter-btn:hover:not(.active) {
+    background: #e0e0e0;
+}
+
+/* 课程网格 */
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+/* 课程卡片 */
+.course-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    box-shadow: var(--card-shadow);
+}
+
+.course-card:hover {
+    transform: translateY(-5px);
+}
+
+.course-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.course-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.course-info {
+    padding: 1.5rem;
+}
+
+.course-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.course-desc {
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+/* 课程元数据 */
+.course-meta {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    color: #666;
+}
+
+.course-meta i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+/* 课程评分 */
+.course-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.stars {
+    color: #FFD700;
+}
+
+.rating-count {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* 报名按钮 */
+.enroll-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.enroll-btn:hover {
+    background: var(--secondary-color);
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 768px) {
+    .courses-page {
+        padding: 1rem;
+        padding-top: 70px;
+    }
+
+    .course-filters {
+        justify-content: center;
+    }
+
+    .courses-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 修改课程页面布局 */
+.page-container {
+    padding-top: var(--nav-height);
+    min-height: 100vh;
+    background: var(--light-bg);
+}
+
+.content-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+} 
