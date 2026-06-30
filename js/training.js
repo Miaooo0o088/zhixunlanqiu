@@ -11,9 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * 初始化训练数据统计
  */
 const initTrainingStats = () => {
-    // 从API获取训练数据
     fetchTrainingStats();
-    // 更新统计显示
     updateStatsDisplay();
 };
 
@@ -27,13 +25,13 @@ const initTrainingHistory = () => {
 /**
  * 全局变量
  */
-let cameraStream = null; // 存储相机流
-let hasPermission = false; // 存储相机权限状态
-let isTraining = false; // 存储训练状态
-let currentCamera = 'user'; // 当前使用的相机('user'为前置,'environment'为后置)
-let detectionModel = null; // 姿态检测模型
-let detector = null; // 姿态检测器
-let detectionInterval = null; // 检测间隔
+let cameraStream = null;
+let hasPermission = false;
+let isTraining = false;
+let currentCamera = 'user';
+let detectionModel = null;
+let detector = null;
+let detectionInterval = null;
 
 // AI分析相关变量
 let isAnalysisEnabled = false;
@@ -43,8 +41,6 @@ const posePoints = [
     'shoulder_l', 'elbow_l', 'wrist_l', 'hip_r', 'knee_r',
     'ankle_r', 'hip_l', 'knee_l', 'ankle_l'
 ];
-
-// 姿势连接关系定义
 const poseConnections = [
     ['head', 'neck'],
     ['neck', 'shoulder_l'], ['neck', 'shoulder_r'],
@@ -54,12 +50,14 @@ const poseConnections = [
     ['hip_l', 'knee_l'], ['hip_r', 'knee_r'],
     ['knee_l', 'ankle_l'], ['knee_r', 'ankle_r']
 ];
-
-// 动作轨迹历史
 const trajectoryHistory = new Map();
 const maxTrajectoryPoints = 30;
 
-// 标准动作参考数据
+// 加载重试相关
+let loadRetryCount = 0;
+const MAX_RETRIES = 2;
+let isModelLoading = false;
+
 const standardPoses = {
     shooting: {
         preparation: {
@@ -93,15 +91,12 @@ const standardPoses = {
 
 /**
  * 请求相机权限
- * @param {string} type - 训练类型(shooting/dribbling)
  */
 function requestCamera(type) {
     if (hasPermission && cameraStream) {
-        // 如果已有权限，直接开始训练
         startTrainingSession(type);
         return;
     }
-
     const modal = document.getElementById('cameraModal');
     modal.classList.add('active');
     modal.dataset.trainingType = type;
@@ -112,15 +107,9 @@ function requestCamera(type) {
  */
 async function switchCamera() {
     if (!cameraStream) return;
-    
-    // 停止当前相机流
     cameraStream.getTracks().forEach(track => track.stop());
-    
-    // 切换相机方向
     currentCamera = currentCamera === 'user' ? 'environment' : 'user';
-    
     try {
-        // 获取新的相机流
         cameraStream = await navigator.mediaDevices.getUserMedia({
             video: {
                 width: { ideal: 1280 },
@@ -128,19 +117,14 @@ async function switchCamera() {
                 facingMode: currentCamera
             }
         });
-        
-        // 更新视频元素
         const videoElement = document.getElementById('camera');
         videoElement.srcObject = cameraStream;
         await videoElement.play();
-        
-        // 更新切换按钮图标
         const toggleBtn = document.getElementById('toggleCamera');
         toggleBtn.innerHTML = `
             <i class="fas fa-${currentCamera === 'user' ? 'camera' : 'camera-rotate'}"></i>
             <span>${currentCamera === 'user' ? '前置' : '后置'}相机</span>
         `;
-        
     } catch (err) {
         console.error('切换相机失败:', err);
         alert('切换相机失败，请检查设备是否有多个相机');
@@ -153,7 +137,6 @@ async function switchCamera() {
 async function startTraining() {
     const modal = document.getElementById('cameraModal');
     const type = modal.dataset.trainingType;
-    // 设置按钮加载状态
     const card = document.querySelector(`.training-card[data-type="${type}"]`);
     const startBtn = card.querySelector('.start-btn');
     const originalHTML = startBtn.innerHTML;
@@ -161,7 +144,6 @@ async function startTraining() {
     startBtn.disabled = true;
     
     try {
-        // 请求相机权限
         cameraStream = await navigator.mediaDevices.getUserMedia({ 
             video: { 
                 width: { ideal: 1280 },
@@ -170,24 +152,14 @@ async function startTraining() {
             } 
         });
         hasPermission = true;
-        
-        // 将相机流连接到视频元素
         const videoElement = document.getElementById('camera');
         videoElement.srcObject = cameraStream;
-        
-        // 等待视频加载完成
         await videoElement.play();
-        // 确保视频元数据已加载
         if (videoElement.videoWidth === 0) {
             await new Promise(resolve => videoElement.onloadedmetadata = resolve);
         }
-        
-        // 开始训练会话
         startTrainingSession(type);
-        
-        // 关闭弹窗
         closeModal();
-        
     } catch (err) {
         console.error('相机访问失败:', err);
         alert('无法访问相机，请确保已授予相机权限');
@@ -200,14 +172,11 @@ async function startTraining() {
 
 /**
  * 开始训练会话
- * @param {string} type - 训练类型
  */
 function startTrainingSession(type) {
     isTraining = true;
     const card = document.querySelector(`.training-card[data-type="${type}"]`);
     const startBtn = card.querySelector('.start-btn');
-    
-    // 更新按钮状态
     startBtn.innerHTML = `
         <span>
             <i class="fas fa-stop"></i>
@@ -217,32 +186,27 @@ function startTrainingSession(type) {
     startBtn.classList.add('training-active');
     startBtn.onclick = () => endTrainingSession(type);
 
-    // 显示相机视图
     const videoContainer = document.querySelector('.video-container');
     videoContainer.style.display = 'flex';
     videoContainer.scrollIntoView({ behavior: 'smooth' });
 
-    // 确保视频元素正确显示
     const videoElement = document.getElementById('camera');
     videoElement.style.display = 'block';
     videoElement.style.width = '100%';
     videoElement.style.height = '100%';
     videoElement.style.objectFit = 'cover';
 
-    // 开始姿势检测
+    loadRetryCount = 0;
     startPoseDetection(document.getElementById('camera'), type);
 }
 
 /**
  * 结束训练会话
- * @param {string} type - 训练类型
  */
 function endTrainingSession(type) {
     isTraining = false;
     const card = document.querySelector(`.training-card[data-type="${type}"]`);
     const startBtn = card.querySelector('.start-btn');
-    
-    // 恢复按钮状态
     startBtn.innerHTML = `
         <span>
             <i class="fas fa-play"></i>
@@ -252,32 +216,21 @@ function endTrainingSession(type) {
     startBtn.classList.remove('training-active');
     startBtn.onclick = () => requestCamera(type);
 
-    // 停止AI分析
     stopAnalysis();
-
-    // 停止姿势检测
     if (detectionInterval) {
         clearInterval(detectionInterval);
         detectionInterval = null;
     }
-
-    // 清理检测器资源
     if (detector) {
         detector = null;
         detectionModel = null;
     }
-
-    // 隐藏相机视图
     const videoContainer = document.querySelector('.video-container');
     videoContainer.style.display = 'none';
-
-    // 停止相机流
     if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.stop());
         cameraStream = null;
     }
-
-    // 保存训练记录
     saveTrainingRecord(type);
 }
 
@@ -290,34 +243,35 @@ function closeModal() {
 }
 
 /**
- * 开始姿势检测（增加 poseDetection 检查，使用 Lightning 模型）
+ * 开始姿势检测（带重试机制）
  */
 async function startPoseDetection(video, type) {
     const statusEl = document.querySelector('.analysis-status');
+    if (isModelLoading) return;
+    isModelLoading = true;
+
     try {
-        // 检查 poseDetection 是否加载成功
         if (typeof poseDetection === 'undefined') {
-            throw new Error('TensorFlow.js 姿态检测库未加载，请检查网络连接或刷新页面重试。');
+            throw new Error('TensorFlow.js 姿态检测库未加载，请刷新页面重试。');
         }
 
-        statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 加载模型中...';
+        statusEl.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 加载模型中 (尝试 ${loadRetryCount+1}/${MAX_RETRIES+1})...`;
 
         if (!detector) {
             detectionModel = poseDetection.SupportedModels.MoveNet;
-            // 使用更轻量的 Lightning 模型，加快加载
             const modelConfig = {
                 modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
                 enableSmoothing: true
             };
-            // 增加超时控制（30秒）
-            const loadTimeout = 30000;
+            const loadTimeout = 60000;
             const loadPromise = poseDetection.createDetector(detectionModel, modelConfig);
             const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('模型加载超时 (30秒)，请检查网络')), loadTimeout)
+                setTimeout(() => reject(new Error(`模型加载超时 (${loadTimeout/1000}秒)，请检查网络`)), loadTimeout)
             );
             detector = await Promise.race([loadPromise, timeoutPromise]);
         }
 
+        loadRetryCount = 0;
         statusEl.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> AI实时分析中...';
         initializePoseMarkers();
 
@@ -338,12 +292,35 @@ async function startPoseDetection(video, type) {
             }
         }, 100);
 
+        isModelLoading = false;
+
     } catch (error) {
         console.error('姿势检测初始化失败:', error);
-        const errorMsg = error.message || '未知错误，请检查网络连接';
+        const errorMsg = error.message || '未知错误';
         statusEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 加载失败: ${errorMsg}`;
-        alert(`AI模型加载失败，请检查网络连接。\n具体错误：${errorMsg}`);
-        throw error;
+
+        if (loadRetryCount < MAX_RETRIES && !errorMsg.includes('库未加载')) {
+            loadRetryCount++;
+            statusEl.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 加载失败，2秒后重试... (${loadRetryCount}/${MAX_RETRIES})`;
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            isModelLoading = false;
+            startPoseDetection(video, type);
+            return;
+        }
+
+        isModelLoading = false;
+        const retryBtn = document.createElement('button');
+        retryBtn.className = 'btn btn-primary';
+        retryBtn.innerHTML = '<i class="fas fa-redo"></i> 重试加载';
+        retryBtn.onclick = () => {
+            loadRetryCount = 0;
+            statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 重新加载中...';
+            retryBtn.remove();
+            startPoseDetection(video, type);
+        };
+        statusEl.appendChild(document.createElement('br'));
+        statusEl.appendChild(retryBtn);
+        alert(`AI模型加载失败，请检查网络连接后点击"重试加载"按钮。\n错误：${errorMsg}`);
     }
 }
 
