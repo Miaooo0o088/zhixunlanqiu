@@ -11,8 +11,6 @@
     <!-- TensorFlow.js -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
@@ -121,7 +119,14 @@
                 </div>
             </div>
 
-            <!-- 视频区域 (上移) -->
+            <div class="training-history card">
+                <h2>训练记录</h2>
+                <div class="training-records">
+                    <!-- 训练记录将动态插入这里 -->
+                </div>
+            </div>
+
+            <!-- 视频区域 -->
             <div class="video-container">
                 <div class="camera-feed">
                     <video id="camera" autoplay playsinline></video>
@@ -143,10 +148,6 @@
                                     <label>动作流畅度</label>
                                     <span class="smoothness">90%</span>
                                 </div>
-                                <div class="analysis-feedback">
-                                    <i class="fas fa-comment-dots"></i>
-                                    <span id="feedback-text">动作标准</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -166,14 +167,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 训练记录 (下移) -->
-            <div class="training-history card">
-                <h2>训练记录</h2>
-                <div class="training-records">
-                    <!-- 训练记录将动态插入这里 -->
-                </div>
-            </div>
         </div>
     </main>
 
@@ -185,41 +178,6 @@
             <div class="modal-buttons">
                 <button class="btn cancel-btn" onclick="closeModal()">取消</button>
                 <button class="btn btn-primary confirm-btn" onclick="startTraining()">允许</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 训练总结报告弹窗 -->
-    <div class="report-modal" id="reportModal">
-        <div class="modal-content">
-            <h2 class="modal-title">训练总结报告</h2>
-            
-            <div class="report-summary">
-                <div class="summary-item">
-                    <span class="label">平均准确度</span>
-                    <span class="value" id="report-accuracy">--%</span>
-                </div>
-                <div class="summary-item">
-                    <span class="label">平均流畅度</span>
-                    <span class="value" id="report-smoothness">--%</span>
-                </div>
-                <div class="summary-item">
-                    <span class="label">训练时长</span>
-                    <span class="value" id="report-duration">--</span>
-                </div>
-            </div>
-
-            <div class="report-chart">
-                <canvas id="accuracyChart"></canvas>
-            </div>
-
-            <div class="report-feedback">
-                <h4><i class="fas fa-bullseye"></i> AI教练核心建议</h4>
-                <p id="report-coach-tip">暂无建议</p>
-            </div>
-
-            <div class="modal-buttons">
-                <button class="btn btn-primary confirm-btn" id="saveReportBtn">保存并关闭</button>
             </div>
         </div>
     </div>
