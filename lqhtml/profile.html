@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - AI篮球训练营</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="nav-container">
+        <nav>
+            <div class="nav-brand">
+                <i class="fas fa-basketball-ball"></i>
+                <a href="index.html">AI篮球训练营</a>
+            </div>
+            <ul class="nav-links">
+                <ul class="nav-links">
+                    <li><a href="index.html">
+                        <i class="fas fa-home"></i> 首页
+                    </a></li>
+                    <li> <li><a href="training.html">
+                        <i class="fas fa-running"></i> 实时训练
+                    </a></li>
+                    <li><a href="courses.html">
+                        <i class="fas fa-star"></i> 明星课程
+                    </a></li>
+                    <li><a href="leaderboard.html">
+                        <i class="fas fa-trophy"></i> 排行榜
+                    </a></li>
+                    <li><a href="community.html">
+                        <i class="fas fa-users"></i> 社区
+                    </a></li>
+                <li class="active"><a href="profile.html"><i class="fas fa-user"></i> 个人中心</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="profile-container">
+        <div class="profile-sidebar">
+            <div class="user-info">
+                <div class="avatar-wrapper">
+                    <img src="images/default-avatar.png" alt="用户头像" class="user-avatar">
+                    <button class="change-avatar-btn">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+                <h2 class="username">张三</h2>
+                <p class="user-level">Level 3</p>
+            </div>
+            <ul class="profile-menu">
+                <li class="active" data-tab="basic-info">
+                    <i class="fas fa-user-circle"></i> 基本信息
+                </li>
+                <li data-tab="training-stats">
+                    <i class="fas fa-chart-line"></i> 训练数据
+                </li>
+                <li data-tab="my-courses">
+                    <i class="fas fa-book-open"></i> 我的课程
+                </li>
+                <li data-tab="account-security">
+                    <i class="fas fa-shield-alt"></i> 账号安全
+                </li>
+            </ul>
+        </div>
+
+        <div class="profile-content">
+            <!-- 基本信息 -->
+            <div class="profile-section active" id="basic-info">
+                <h3>基本信息</h3>
+                <form id="basicInfoForm" class="profile-form">
+                    <div class="form-group">
+                        <label for="nickname">昵称</label>
+                        <input type="text" id="nickname" name="nickname" value="张三">
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">性别</label>
+                        <select id="gender" name="gender">
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday">生日</label>
+                        <input type="date" id="birthday" name="birthday">
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">个人简介</label>
+                        <textarea id="bio" name="bio" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="save-btn">保存修改</button>
+                </form>
+            </div>
+
+            <!-- 训练数据 -->
+            <div class="profile-section" id="training-stats">
+                <h3>训练数据</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>总训练时长</h4>
+                            <p id="totalTrainingTime">加载中...</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-basketball-ball"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>投篮命中率</h4>
+                            <p id="shootingAccuracy">加载中...</p>
+                        </div>
+                    </div>
+                    <!-- 更多训练数据卡片 -->
+                </div>
+                <div class="training-chart">
+                    <canvas id="trainingChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 我的课程 -->
+            <div class="profile-section" id="my-courses">
+                <h3>我的课程</h3>
+                <div class="course-list">
+                    <!-- 课程卡片 -->
+                </div>
+            </div>
+
+            <!-- 账号安全 -->
+            <div class="profile-section" id="account-security">
+                <h3>账号安全</h3>
+                <div class="security-items">
+                    <div class="security-item">
+                        <div class="security-info">
+                            <h4>登录密码</h4>
+                            <p>建议定期更换密码，确保账号安全</p>
+                        </div>
+                        <button class="change-btn">修改</button>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-info">
+                            <h4>手机绑定</h4>
+                            <p>已绑定：138****8888</p>
+                        </div>
+                        <button class="change-btn">更换</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/profile.js"></script>
+</body>
+</html> 

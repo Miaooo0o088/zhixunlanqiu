@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - AI篮球训练营</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="auth-page">
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-basketball-ball"></i> 返回首页</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <img src="images/logo.png" alt="AI篮球训练营" class="auth-logo">
+                <h1>创建新账号</h1>
+                <p>加入AI篮球训练营，开启你的篮球之旅</p>
+            </div>
+
+            <div class="auth-content">
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" id="username" name="username" placeholder="请设置用户名" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">手机号</label>
+                        <input type="tel" id="phone" name="phone" placeholder="请输入手机号" pattern="[0-9]{11}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="verifyCode">验证码</label>
+                        <div class="code-input">
+                            <input type="text" id="verifyCode" name="verifyCode" placeholder="请输入验证码" maxlength="6" required>
+                            <button type="button" class="send-code-btn">获取验证码</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">设置密码</label>
+                        <div class="password-input">
+                            <input type="password" id="password" name="password" placeholder="请设置登录密码" required>
+                            <button type="button" class="toggle-password">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar"></div>
+                            <span class="strength-text">密码强度：弱</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">确认密码</label>
+                        <div class="password-input">
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="请再次输入密码" required>
+                            <button type="button" class="toggle-password">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="agreement">
+                        <label class="checkbox-label">
+                            <input type="checkbox" required>
+                            <span>我已阅读并同意</span>
+                        </label>
+                        <a href="#" class="agreement-link">服务条款</a>
+                        <span>和</span>
+                        <a href="#" class="agreement-link">隐私政策</a>
+                    </div>
+
+                    <div class="auth-buttons">
+                        <button type="submit" class="login-btn">立即注册</button>
+                        <a href="auth.html" class="register-btn">返回登录</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/register.js"></script>
+</body>
+</html> 

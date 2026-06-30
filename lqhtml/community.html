@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社区 - AI篮球训练营</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/community.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-brand">
+                <a href="index.html">AI篮球训练营</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">
+                    <i class="fas fa-home"></i> 首页
+                </a></li>
+                <li><a href="training.html">
+                    <i class="fas fa-running"></i> 实时训练
+                </a></li>
+                <li><a href="courses.html">
+                    <i class="fas fa-star"></i> 明星课程
+                </a></li>
+                <li><a href="leaderboard.html">
+                    <i class="fas fa-trophy"></i> 排行榜
+                </a></li>
+                <li><a href="community.html" class="active">
+                    <i class="fas fa-users"></i> 社区
+                </a></li>
+                <li><a href="profile.html">
+                    <i class="fas fa-user"></i> 个人中心
+                </a></li>
+                <li class="auth-links">
+                    <a href="auth.html" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> 登录
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="community-page">
+        <div class="container">
+            <!-- 社区公告 -->
+            <div class="community-announcement">
+                <div class="announcement-header">
+                    <i class="fas fa-bullhorn"></i>
+                    <h2>社区公告</h2>
+                </div>
+                <div class="announcement-content">
+                    <marquee scrollamount="3">
+                        🏀 欢迎参加本周末的线上投篮大赛！ | 
+                        📢 新版AI训练功能已上线 |
+                        🌟 恭喜【篮球达人】获得上周最佳训练者
+                    </marquee>
+                </div>
+            </div>
+
+            <!-- 活动中心 -->
+            <div class="activity-center">
+                <h2><i class="fas fa-calendar-alt"></i> 近期活动</h2>
+                <div class="activity-cards">
+                    <div class="activity-card">
+                        <div class="activity-banner">
+                            <img src="images\库里投篮姿势.jpg" alt="投篮比赛">
+                            <span class="activity-status ongoing">进行中</span>
+                        </div>
+                        <div class="activity-info">
+                            <h3>线上投篮大赛</h3>
+                            <p>使用AI分析功能，挑战最高准确率！</p>
+                            <div class="activity-meta">
+                                <span><i class="fas fa-clock"></i> 剩余2天</span>
+                                <span><i class="fas fa-user-friends"></i> 1234人参与</span>
+                            </div>
+                            <button class="join-btn">立即参加</button>
+                        </div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-banner">
+                            <img src="images\岭南训练营.jpg" alt="训练营">
+                            <span class="activity-status upcoming">即将开始</span>
+                        </div>
+                        <div class="activity-info">
+                            <h3>暑期训练营</h3>
+                            <p>7天线上训练营，专业教练在线指导</p>
+                            <div class="activity-meta">
+                                <span><i class="fas fa-clock"></i> 5天后开始</span>
+                                <span><i class="fas fa-user-friends"></i> 521人预约</span>
+                            </div>
+                            <button class="join-btn">预约报名</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 论坛信息统计 -->
+            <div class="forum-stats">
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <div class="stat-info">
+                        <span class="stat-value">12,345</span>
+                        <span class="stat-label">社区成员</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-comments"></i>
+                    <div class="stat-info">
+                        <span class="stat-value">8,765</span>
+                        <span class="stat-label">今日帖子</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-fire"></i>
+                    <div class="stat-info">
+                        <span class="stat-value">3,456</span>
+                        <span class="stat-label">热门讨论</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 热门话题 -->
+            <div class="hot-topics">
+                <h2><i class="fas fa-hashtag"></i> 热门话题</h2>
+                <div class="topics-list">
+                    <div class="topic-tag"># NBA季后赛</div>
+                    <div class="topic-tag"># 投篮技巧</div>
+                    <div class="topic-tag"># 运球进阶</div>
+                    <div class="topic-tag"># 体能训练</div>
+                    <div class="topic-tag"># 篮球装备</div>
+                </div>
+            </div>
+
+            <!-- 发帖区域 -->
+            <div class="post-editor">
+                <div class="community-container">
+                    <h1>社区论坛</h1>
+                    <div class="post-form">
+                        <textarea placeholder="分享你的训练心得..."></textarea>
+                        <div class="post-actions">
+                            <button class="upload-btn"><i class="fas fa-image"></i> 添加图片</button>
+                            <button class="post-btn">发布</button>
+                        </div>
+                    </div>
+
+                    <div class="posts-filter">
+                        <button class="filter-btn active">最新</button>
+                        <button class="filter-btn">热门</button>
+                        <button class="filter-btn">精华</button>
+                    </div>
+
+                    <div class="posts">
+                        <div class="post-card">
+                            <div class="post-header">
+                                <img src="images/avatars/avatar1.jpg" alt="用户头像">
+                                <div class="post-info">
+                                    <span class="username">篮球达人</span>
+                                    <span class="post-time">2小时前</span>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <p>今天完成了投篮训练，准确率提升到85%了！</p>
+                                <img src="images/community/post1.jpg" alt="训练照片">
+                            </div>
+                            <div class="post-actions">
+                                <button><i class="far fa-heart"></i> 点赞</button>
+                                <button><i class="far fa-comment"></i> 评论</button>
+                                <button><i class="far fa-share-square"></i> 分享</button>
+                            </div>
+                        </div>
+                        <!-- 更多帖子 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/nav.js"></script>
+    <script src="js/community.js"></script>
+</body>
+</html> 
