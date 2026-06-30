@@ -290,48 +290,46 @@ function closeModal() {
 }
 
 /**
- * 开始姿势检测
- * @param {HTMLVideoElement} video - 视频元素
- * @param {string} type - 训练类型
+ * 开始姿势检测（增加 poseDetection 检查，使用 Lightning 模型）
  */
 async function startPoseDetection(video, type) {
     const statusEl = document.querySelector('.analysis-status');
     try {
-        // 显示加载状态
+        // 检查 poseDetection 是否加载成功
+        if (typeof poseDetection === 'undefined') {
+            throw new Error('TensorFlow.js 姿态检测库未加载，请检查网络连接或刷新页面重试。');
+        }
+
         statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 加载模型中...';
 
-        // 加载MoveNet模型
         if (!detector) {
             detectionModel = poseDetection.SupportedModels.MoveNet;
-            
-            // 创建检测器配置
+            // 使用更轻量的 Lightning 模型，加快加载
             const modelConfig = {
-                modelType: poseDetection.movenet.modelType.SINGLEPOSE_THUNDER,
+                modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
                 enableSmoothing: true
             };
-            
-            // 创建检测器
-            detector = await poseDetection.createDetector(detectionModel, modelConfig);
+            // 增加超时控制（30秒）
+            const loadTimeout = 30000;
+            const loadPromise = poseDetection.createDetector(detectionModel, modelConfig);
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('模型加载超时 (30秒)，请检查网络')), loadTimeout)
+            );
+            detector = await Promise.race([loadPromise, timeoutPromise]);
         }
 
         statusEl.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> AI实时分析中...';
-        // 初始化姿势标记点
         initializePoseMarkers();
 
-        // 确保视频元数据已加载
         if (video.videoWidth === 0) {
             await new Promise(resolve => video.onloadedmetadata = resolve);
         }
 
-        // 开始实时检测
         detectionInterval = setInterval(async () => {
             try {
-                // 使用MoveNet进行姿势检测
                 const poses = await detector.estimatePoses(video);
                 if (poses.length > 0) {
-                    const pose = poses[0];
-                    // 转换坐标（使用视频实际尺寸）
-                    const convertedPose = convertMoveNetPose(pose, video.videoWidth, video.videoHeight);
+                    const convertedPose = convertMoveNetPose(poses[0], video.videoWidth, video.videoHeight);
                     updatePoseVisualization(convertedPose);
                     analyzeTrainingForm(convertedPose, type);
                 }
@@ -342,23 +340,18 @@ async function startPoseDetection(video, type) {
 
     } catch (error) {
         console.error('姿势检测初始化失败:', error);
-        statusEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i> 模型加载失败，请检查网络';
-        alert('AI模型加载失败，请检查网络连接');
+        const errorMsg = error.message || '未知错误，请检查网络连接';
+        statusEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 加载失败: ${errorMsg}`;
+        alert(`AI模型加载失败，请检查网络连接。\n具体错误：${errorMsg}`);
+        throw error;
     }
 }
 
 /**
  * 将MoveNet的姿势数据转换为与PoseNet兼容的格式
- * @param {Object} moveNetPose - MoveNet检测到的姿势数据
- * @param {number} imgWidth - 视频实际宽度
- * @param {number} imgHeight - 视频实际高度
- * @returns {Object} 转换后的姿势数据（坐标已转为百分比）
  */
 function convertMoveNetPose(moveNetPose, imgWidth, imgHeight) {
-    // MoveNet关键点名称与PoseNet名称的对应关系
     let keyPointMap;
-    
-    // 前置相机模式下使用直接映射
     if (currentCamera === 'user') {
         keyPointMap = [
             { movenet: 'nose', posenet: 'nose' },
@@ -379,9 +372,7 @@ function convertMoveNetPose(moveNetPose, imgWidth, imgHeight) {
             { movenet: 'left_ankle', posenet: 'leftAnkle' },
             { movenet: 'right_ankle', posenet: 'rightAnkle' }
         ];
-    } 
-    // 后置相机模式下交换左右
-    else {
+    } else {
         keyPointMap = [
             { movenet: 'nose', posenet: 'nose' },
             { movenet: 'left_eye', posenet: 'rightEye' },
@@ -402,12 +393,9 @@ function convertMoveNetPose(moveNetPose, imgWidth, imgHeight) {
             { movenet: 'right_ankle', posenet: 'leftAnkle' }
         ];
     }
-    
-    // 转换关键点数据 - 使用百分比坐标
     const keypoints = moveNetPose.keypoints.map(point => {
         const mapping = keyPointMap.find(m => m.movenet === point.name);
         const partName = mapping ? mapping.posenet : point.name;
-        // 计算相对于视频尺寸的百分比
         const x = (point.x / imgWidth) * 100;
         const y = (point.y / imgHeight) * 100;
         return {
@@ -416,7 +404,6 @@ function convertMoveNetPose(moveNetPose, imgWidth, imgHeight) {
             score: point.score
         };
     });
-    
     return {
         keypoints,
         score: moveNetPose.score || 1.0
@@ -430,7 +417,6 @@ function initializePoseMarkers() {
     const poseMarkers = document.querySelector('.pose-markers');
     poseMarkers.innerHTML = '';
 
-    // 创建关键点标记
     const keyPoints = [
         'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar',
         'leftShoulder', 'rightShoulder', 'leftElbow', 'rightElbow',
@@ -445,7 +431,6 @@ function initializePoseMarkers() {
         poseMarkers.appendChild(marker);
     });
 
-    // 创建骨架连接线容器
     const skeletonContainer = document.createElement('div');
     skeletonContainer.className = 'pose-skeleton';
     poseMarkers.appendChild(skeletonContainer);
@@ -453,38 +438,31 @@ function initializePoseMarkers() {
 
 /**
  * 更新姿势可视化
- * @param {Object} pose - 检测到的姿势数据（坐标已为百分比）
  */
 function updatePoseVisualization(pose) {
     const poseMarkers = document.querySelector('.pose-markers');
     const keypoints = pose.keypoints;
 
-    // 更新关键点位置
     keypoints.forEach(point => {
         const marker = poseMarkers.querySelector(`[data-point="${point.part}"]`);
         if (marker) {
-            // 直接使用百分比坐标
             marker.style.left = `${point.position.x}%`;
             marker.style.top = `${point.position.y}%`;
-            // 根据置信度设置标记点的透明度
             marker.style.opacity = point.score > 0.5 ? 1 : 0.3;
             marker.style.transform = `scale(${point.score})`;
         }
     });
 
-    // 更新骨架连接线
     updateSkeletonLines(keypoints);
 }
 
 /**
  * 更新骨架连接线
- * @param {Array} keypoints - 关键点数据
  */
 function updateSkeletonLines(keypoints) {
     const skeletonContainer = document.querySelector('.pose-skeleton');
     skeletonContainer.innerHTML = '';
 
-    // 定义骨架连接
     const skeleton = [
         ['leftShoulder', 'rightShoulder'],
         ['leftShoulder', 'leftElbow'],
@@ -500,11 +478,9 @@ function updateSkeletonLines(keypoints) {
         ['rightKnee', 'rightAnkle']
     ];
 
-    // 绘制连接线
     skeleton.forEach(([start, end]) => {
         const startPoint = keypoints.find(kp => kp.part === start);
         const endPoint = keypoints.find(kp => kp.part === end);
-
         if (startPoint && endPoint && startPoint.score > 0.5 && endPoint.score > 0.5) {
             drawSkeletonLine(startPoint.position, endPoint.position);
         }
@@ -512,33 +488,27 @@ function updateSkeletonLines(keypoints) {
 }
 
 /**
- * 绘制骨架连接线（坐标已是百分比）
+ * 绘制骨架连接线
  */
 function drawSkeletonLine(start, end) {
     const skeletonContainer = document.querySelector('.pose-skeleton');
-
     const startX = start.x;
     const startY = start.y;
     const endX = end.x;
     const endY = end.y;
-
     const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
     const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
-
     const line = document.createElement('div');
     line.className = 'skeleton-line';
     line.style.width = `${length}%`;
     line.style.left = `${startX}%`;
     line.style.top = `${startY}%`;
     line.style.transform = `rotate(${angle}deg)`;
-
     skeletonContainer.appendChild(line);
 }
 
 /**
  * 分析训练动作
- * @param {Object} pose - 检测到的姿势数据
- * @param {string} type - 训练类型
  */
 function analyzeTrainingForm(pose, type) {
     const keypoints = pose.keypoints;
@@ -553,7 +523,6 @@ function analyzeTrainingForm(pose, type) {
         smoothness = analyzeMovementStability(keypoints);
     }
 
-    // 更新分析指标
     updateMetrics({
         accuracy: accuracy.toFixed(1),
         smoothness: smoothness.toFixed(1)
@@ -561,39 +530,19 @@ function analyzeTrainingForm(pose, type) {
 }
 
 /**
- * 从关键点数组中获取指定部位的关键点
+ * 辅助：获取关键点
  */
 function getKeypoint(keypoints, partName) {
     const keypoint = keypoints.find(point => point.part === partName);
     if (!keypoint) {
         console.warn(`未找到关键点: ${partName}`);
-        return {
-            position: { x: 0, y: 0 },
-            score: 0
-        };
+        return { position: { x: 0, y: 0 }, score: 0 };
     }
     return keypoint;
 }
 
 /**
- * 分析投篮姿势
- */
-function analyzeShootingForm(keypoints) {
-    const shoulder = getKeypoint(keypoints, 'rightShoulder');
-    const elbow = getKeypoint(keypoints, 'rightElbow');
-    const wrist = getKeypoint(keypoints, 'rightWrist');
-    
-    const elbowAngle = calculateAngle(shoulder, elbow, wrist);
-    
-    let score = 100;
-    if (Math.abs(elbowAngle - 90) > 15) {
-        score -= 20;
-    }
-    return Math.max(0, score);
-}
-
-/**
- * 计算关键点之间的角度（坐标已是百分比，不影响角度计算）
+ * 计算三点角度
  */
 function calculateAngle(pointA, pointB, pointC) {
     const BA = {
@@ -609,51 +558,56 @@ function calculateAngle(pointA, pointB, pointC) {
 }
 
 /**
- * 分析动作的平滑度
+ * 投篮姿势分析
+ */
+function analyzeShootingForm(keypoints) {
+    const shoulder = getKeypoint(keypoints, 'rightShoulder');
+    const elbow = getKeypoint(keypoints, 'rightElbow');
+    const wrist = getKeypoint(keypoints, 'rightWrist');
+    const elbowAngle = calculateAngle(shoulder, elbow, wrist);
+    let score = 100;
+    if (Math.abs(elbowAngle - 90) > 15) score -= 20;
+    return Math.max(0, score);
+}
+
+/**
+ * 动作平滑度
  */
 function analyzeMovementSmoothness(keypoints) {
     const wrist = getKeypoint(keypoints, 'rightWrist');
     const elbow = getKeypoint(keypoints, 'rightElbow');
     const confidenceScore = (wrist.score + elbow.score) * 50;
     let smoothnessScore = 85 + Math.random() * 10;
-    if (confidenceScore < 80) {
-        smoothnessScore *= (confidenceScore / 100);
-    }
+    if (confidenceScore < 80) smoothnessScore *= (confidenceScore / 100);
     return Math.min(100, smoothnessScore);
 }
 
 /**
- * 分析运球姿势
+ * 运球姿势分析
  */
 function analyzeDribblingForm(keypoints) {
     const hip = getKeypoint(keypoints, 'leftHip');
     const knee = getKeypoint(keypoints, 'leftKnee');
     const ankle = getKeypoint(keypoints, 'leftAnkle');
     const shoulder = getKeypoint(keypoints, 'leftShoulder');
-    
     const kneeAngle = calculateAngle(hip, knee, ankle);
     let score = 100;
-    if (Math.abs(kneeAngle - 120) > 30) {
-        score -= 15;
-    }
+    if (Math.abs(kneeAngle - 120) > 30) score -= 15;
     const bodyHeight = shoulder.position.y - knee.position.y;
-    if (bodyHeight > 0.4) {
-        score -= 10;
-    }
+    if (bodyHeight > 0.4) score -= 10;
     const balanceScore = checkBalance(keypoints);
     score -= (100 - balanceScore) * 0.2;
     return Math.max(0, score);
 }
 
 /**
- * 检查身体平衡性
+ * 平衡性检查
  */
 function checkBalance(keypoints) {
     const leftShoulder = getKeypoint(keypoints, 'leftShoulder');
     const rightShoulder = getKeypoint(keypoints, 'rightShoulder');
     const leftHip = getKeypoint(keypoints, 'leftHip');
     const rightHip = getKeypoint(keypoints, 'rightHip');
-    
     const shoulder = {
         x: (leftShoulder.position.x + rightShoulder.position.x) / 2,
         y: (leftShoulder.position.y + rightShoulder.position.y) / 2
@@ -667,7 +621,7 @@ function checkBalance(keypoints) {
 }
 
 /**
- * 分析动作稳定性
+ * 运球稳定性
  */
 function analyzeMovementStability(keypoints) {
     const balanceScore = checkBalance(keypoints);
@@ -676,30 +630,20 @@ function analyzeMovementStability(keypoints) {
 }
 
 /**
- * 计算关键点的置信度评分
+ * 置信度评分
  */
 function calculateConfidenceScore(keypoints) {
-    const keyPartsForDribbling = [
-        'leftShoulder', 'rightShoulder', 
-        'leftElbow', 'rightElbow',
-        'leftWrist', 'rightWrist',
-        'leftHip', 'rightHip',
-        'leftKnee', 'rightKnee'
-    ];
-    let totalScore = 0;
-    let validPoints = 0;
-    keyPartsForDribbling.forEach(part => {
-        const point = getKeypoint(keypoints, part);
-        if (point.score > 0.1) {
-            totalScore += point.score;
-            validPoints++;
-        }
+    const parts = ['leftShoulder','rightShoulder','leftElbow','rightElbow','leftWrist','rightWrist','leftHip','rightHip','leftKnee','rightKnee'];
+    let total = 0, valid = 0;
+    parts.forEach(part => {
+        const p = getKeypoint(keypoints, part);
+        if (p.score > 0.1) { total += p.score; valid++; }
     });
-    return validPoints > 0 ? (totalScore / validPoints) * 100 : 0;
+    return valid > 0 ? (total / valid) * 100 : 0;
 }
 
 /**
- * 设置动作参考（保留原有功能，未修改）
+ * 以下为参考线和模拟分析功能（保留原有）
  */
 function setPoseReference(type) {
     const referenceData = standardPoses[type];
@@ -774,7 +718,7 @@ function formatKeyPoint(key, value) {
     return `${formattedKey}: ${formattedValue}`;
 }
 
-// 初始化AI分析（保留原功能，未修改）
+// AI分析开关
 function initAnalysis() {
     const toggleAnalysis = document.getElementById('toggleAnalysis');
     const toggleGuide = document.getElementById('toggleGuide');
@@ -912,9 +856,7 @@ function updateMetrics(poseData) {
     smoothness.textContent = `${newSmoothness.toFixed(1)}%`;
 }
 
-/**
- * 保存训练记录
- */
+// 训练记录
 function saveTrainingRecord(type) {
     const record = {
         type,
@@ -978,7 +920,7 @@ function updateTrainingStats(record) {
     }
 }
 
-// 占位函数（防止未定义）
+// 占位函数
 function fetchTrainingStats() {}
 function updateStatsDisplay() {}
 function fetchTrainingHistory() {}
